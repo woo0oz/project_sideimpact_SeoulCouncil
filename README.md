@@ -38,11 +38,6 @@ pnpm install
 ### 2. 환경변수 설정
 ```bash
 # .env.local 파일 생성
-cp .env.example .env.local
-
-# 환경변수 설정
-REACT_APP_API_URL=http://localhost:3001/api  # 백엔드 API URL
-REACT_APP_ENVIRONMENT=development           # 환경 구분
 ```
 
 ### 3. 개발 서버 실행
@@ -54,34 +49,6 @@ yarn dev
 pnpm dev
 ```
 
-브라우저에서 `http://localhost:5173`으로 접속하여 애플리케이션을 확인할 수 있습니다.
-
-### 4. 빌드
-```bash
-npm run build
-# 또는
-yarn build
-# 또는
-pnpm build
-```
-
-### 5. 린팅
-```bash
-npm run lint
-# 또는
-yarn lint
-# 또는
-pnpm lint
-```
-
-### 6. 미리보기
-```bash
-npm run preview
-# 또는
-yarn preview
-# 또는
-pnpm preview
-```
 
 ## 프로젝트 구조
 
@@ -146,16 +113,6 @@ pnpm preview
 
 현재는 목업 데이터를 사용하며, 향후 백엔드 API와 연동될 예정입니다.
 
-### 백엔드 연결 준비사항
-
-프로젝트는 백엔드 연결을 위해 다음과 같이 준비되어 있습니다:
-
-- **API 레이어 분리**: `lib/api.ts`에서 모든 API 호출 관리
-- **타입 정의**: `lib/types.ts`에서 데이터 타입 정의
-- **환경변수 설정**: API URL 등 설정 가능
-- **에러 처리**: API 실패시 fallback 로직 포함
-- **로딩 상태**: 사용자 경험을 위한 로딩 표시
-
 ### 예정된 API 엔드포인트
 
 ```typescript
@@ -180,21 +137,6 @@ GET /api/districts
 GET /api/categories
 ```
 
-### 백엔드 연결시 수정 사항
-
-백엔드가 준비되면 `lib/api.ts`에서 다음 부분만 수정하면 됩니다:
-
-1. `IS_DEVELOPMENT` 조건 제거
-2. 목업 데이터 대신 실제 API 호출 사용
-3. 에러 처리 및 응답 형식 조정
-
-## 환경 설정
-
-### 환경 변수
-```env
-REACT_APP_API_URL=http://localhost:3001/api  # 백엔드 API URL
-REACT_APP_ENVIRONMENT=development           # 환경 구분 (development/production)
-```
 
 ### 브라우저 지원
 - Chrome 90+
@@ -202,11 +144,3 @@ REACT_APP_ENVIRONMENT=development           # 환경 구분 (development/product
 - Safari 14+
 - Edge 90+
 
-## 개발 가이드라인
-
-자세한 개발 가이드라인은 [Guidelines.md](guidelines/Guidelines.md)를 참조하세요.
-
-## 라이선스
-
-이 프로젝트는 MIT 라이선스를 따릅니다.
-````
