@@ -5,6 +5,13 @@ from . import schemas, crud, database, models
 from datetime import datetime
 import json
 
+from .schemas import TbMetaInfoSchema
+from .crud import get_tb_meta_info_all
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from .database import get_db
+
+
 app = FastAPI(
     title="가지농장 (Gaji Farm) API",
     version="v1.0.0"
@@ -111,3 +118,11 @@ async def save_user_preferences(
         },
         "message": "사용자 선호도가 저장되었습니다"
     }
+
+# tb_meta_info 관련 API
+@app.get("/api/v1/meta-info", response_model=list[TbMetaInfoSchema])
+async def read_meta_info(db: AsyncSession = Depends(get_db)):
+    rows = await get_tb_meta_info_all(db)
+    # SQLAlchemy Core의 fetchall() 결과를 dict로 변환
+    return [dict(row._mapping) for row in rows]
+

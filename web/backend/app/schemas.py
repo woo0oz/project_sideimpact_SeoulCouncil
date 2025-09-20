@@ -1,5 +1,10 @@
 from pydantic import BaseModel
 from typing import List, Optional, Literal, Dict, Any
+from pydantic import BaseModel
+from typing import Optional
+from datetime import date
+
+
 
 class District(BaseModel):
     id: str
@@ -9,7 +14,8 @@ class District(BaseModel):
     is_supported: bool
 
     class Config:
-        orm_mode = True
+        # orm_mode = True
+         from_attributes = True
 
 class Category(BaseModel):
     id: str
@@ -20,7 +26,8 @@ class Category(BaseModel):
     agenda_count: int
 
     class Config:
-        orm_mode = True
+        # orm_mode = True
+         from_attributes = True
 
 class Agenda(BaseModel):
     id: str
@@ -40,7 +47,8 @@ class Agenda(BaseModel):
     updated_at: Optional[str]
 
     class Config:
-        orm_mode = True
+        # orm_mode = True
+         from_attributes = True
 
 class AgendaDetail(Agenda):
     attachments: Optional[List[Dict[str, Any]]] = []
@@ -68,3 +76,21 @@ class Pagination(BaseModel):
     totalPages: int
     hasNext: bool
     hasPrev: bool
+
+
+
+    class TbMetaInfoSchema(BaseModel):  # tb_meta_info 테이블에 대한 Pydantic 스키마
+    
+        comm_id: str
+        city: Optional[str]
+        district: Optional[str]
+        title: Optional[str]
+        title_1: Optional[str]
+        session: Optional[str]
+        ordinal_no: Optional[str]
+        sitting: Optional[str]
+        date: Optional[date]
+        url: Optional[str]
+
+    class Config:
+        from_attributes = True

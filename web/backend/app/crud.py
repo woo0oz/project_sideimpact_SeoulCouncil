@@ -2,6 +2,11 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import models
 
+from sqlalchemy.future import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from .models import tb_meta_info
+
+
 async def get_districts(db: AsyncSession):
     result = await db.execute(select(models.District))
     return result.scalars().all()
@@ -24,3 +29,9 @@ async def create_user_preference(db: AsyncSession, district: str, interests: str
     await db.commit()
     await db.refresh(pref)
     return pref
+
+# tb_meta_info 관련 CRUD 함수
+async def get_tb_meta_info_all(db: AsyncSession):
+    result = await db.execute(select(tb_meta_info))
+    return result.fetchall()
+
