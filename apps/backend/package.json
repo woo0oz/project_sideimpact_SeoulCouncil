@@ -1,0 +1,14 @@
+{
+  "name": "@seoul-council/backend",
+  "private": true,
+  "version": "0.0.0",
+  "description": "FastAPI backend for Seoul Council Proceeding analysis",
+  "scripts": {
+    "dev": "uvicorn app.main:app --reload",
+    "start": "uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "install": "pip install -r requirements.txt",
+    "test": "pytest"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

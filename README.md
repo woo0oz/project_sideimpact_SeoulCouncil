@@ -6,6 +6,19 @@
 
 가지농장은 3분 이내에 자신의 삶에 영향있는 지역 의회 안건을 파악할 수 있도록 돕는 반응형 웹 서비스입니다. 사용자는 거주 구와 관심사(교통, 환경, 복지, 경제, 교육 등)를 설정하면 개인화된 의회 안건 요약과 영향도 분석을 받아볼 수 있습니다.
 
+## 프로젝트 구조 (Monorepo)
+
+```
+project_sideimpact_SeoulCouncil/
+├── apps/
+│   ├── frontend/          # React + Vite 프론트엔드
+│   └── backend/           # FastAPI 백엔드
+├── data/                  # 데이터 파일들
+├── packages/              # 공유 패키지들 (필요시)
+├── package.json           # 워크스페이스 설정
+└── vercel.json           # Vercel 배포 설정
+```
+
 ## 주요 기능
 
 - 🏛️ **개인화된 의회 안건 추천**: 거주지와 관심사 기반 맞춤형 안건 제공
@@ -16,36 +29,60 @@
 
 ## 기술 스택
 
-- **Frontend**: React 18 + TypeScript
+### Frontend
+- **Framework**: React 18 + TypeScript
 - **Styling**: Tailwind CSS + shadcn/ui
 - **Font**: Pretendard
 - **Build Tool**: Vite
 - **Icons**: Lucide React
 - **Development**: ESLint + TypeScript
 
+### Backend
+- **Framework**: FastAPI
+- **Database**: PostgreSQL + SQLAlchemy
+- **Migration**: Alembic
+- **Validation**: Pydantic
+- **Server**: Uvicorn
+
 ## 설치 및 실행
 
-### 1. 의존성 설치
+### 전체 프로젝트 설정
 ```bash
+# 루트에서 의존성 설치
 npm install
-# 또는
-yarn install
-# 또는
-pnpm install
+
+# 모든 워크스페이스 설치
+npm run install:all
 ```
 
-### 2. 환경변수 설정
+### 프론트엔드 개발
 ```bash
-# .env.local 파일 생성
-```
-
-### 3. 개발 서버 실행
-```bash
+# 프론트엔드 개발 서버 실행
 npm run dev
-# 또는
-yarn dev
-# 또는
-pnpm dev
+
+# 또는 직접 실행
+cd apps/frontend
+npm run dev
+```
+
+### 백엔드 개발
+```bash
+# 백엔드 개발 서버 실행
+npm run dev:backend
+
+# 또는 직접 실행
+cd apps/backend
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
+```
+
+### 빌드
+```bash
+# 프론트엔드 빌드
+npm run build
+
+# 백엔드 의존성 설치
+npm run build:backend
 ```
 
 

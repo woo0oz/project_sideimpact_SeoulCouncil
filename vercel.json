@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "name": "seoul-council-proceeding",
+  "builds": [
+    {
+      "src": "apps/frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/apps/frontend/$1"
+    }
+  ],
+  "buildCommand": "cd apps/frontend && npm run build",
+  "devCommand": "cd apps/frontend && npm run dev",
+  "installCommand": "npm install",
+  "outputDirectory": "apps/frontend/dist",
+  "framework": "vite",
+  "env": {
+    "NODE_VERSION": "18"
+  }
+}
