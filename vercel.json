@@ -1,6 +1,5 @@
 {
-  "version": 2,
-  "name": "seoul-council-proceeding",
-  "buildCommand": "cd apps/frontend && npm install && npm run build",
-  "outputDirectory": "apps/frontend/dist"
+  "buildCommand": "cd apps/frontend && npm run build",
+  "outputDirectory": "apps/frontend/dist",
+  "installCommand": "cd apps/frontend && npm install"
 }
