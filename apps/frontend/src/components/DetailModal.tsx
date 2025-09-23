@@ -28,7 +28,7 @@ export function DetailModal({ isOpen, onClose, agenda }: DetailModalProps) {
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader className="space-y-3">
           <div className="flex items-start justify-between">
             <div className="flex-1 pr-4">
@@ -69,7 +69,7 @@ export function DetailModal({ isOpen, onClose, agenda }: DetailModalProps) {
           </div>
           
           {/* 요약 */}
-          <div>
+          <div className="border border-gray-200 rounded-lg p-4">
             <h4 className="font-semibold mb-2">📋 안건 요약</h4>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {agenda.summary}
@@ -79,7 +79,9 @@ export function DetailModal({ isOpen, onClose, agenda }: DetailModalProps) {
           <Separator />
           
           {/* 상세 정보 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h4 className="font-semibold mb-4">📊 상세 정보</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {agenda.budget && (
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
@@ -109,14 +111,15 @@ export function DetailModal({ isOpen, onClose, agenda }: DetailModalProps) {
                 <p className="text-sm text-muted-foreground pl-6">{agenda.relatedDepartment}</p>
               </div>
             )}
+            </div>
           </div>
           
           <Separator />
           
           {/* 전문 보기 */}
-          <div>
+          <div className="border border-gray-200 rounded-lg p-4">
             <h4 className="font-semibold mb-3">📄 회의록 전문</h4>
-            <div className="bg-muted/50 rounded-lg p-4 text-sm leading-relaxed">
+            <div className="bg-muted/50 rounded-lg p-4 text-sm leading-relaxed border border-gray-100">
               {agenda.fullContent}
             </div>
           </div>
