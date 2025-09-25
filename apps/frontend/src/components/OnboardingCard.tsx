@@ -46,7 +46,7 @@ export function OnboardingCard({ isCompleted = false, district, interests = [], 
               </div>
             </div>
             <Button variant="ghost" size="sm" onClick={onEdit}>
-              수정
+              변경
             </Button>
           </div>
         </CardContent>
