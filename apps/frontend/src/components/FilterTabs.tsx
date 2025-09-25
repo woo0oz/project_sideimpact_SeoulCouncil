@@ -28,10 +28,17 @@ export function FilterTabs({ activeTab, onTabChange }: FilterTabsProps) {
             <TabsTrigger 
               key={tab.value} 
               value={tab.value}
-              className="text-xs lg:text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="text-xs lg:text-sm whitespace-nowrap border-2 border-transparent data-[state=active]:border-purple-300 data-[state=active]:bg-transparent data-[state=active]:text-purple-600 hover:border-purple-200 transition-all duration-200"
             >
               <span>{tab.label}</span>
-              <Badge variant="secondary" className="ml-2 text-xs px-1.5 py-0">
+              <Badge 
+                variant="secondary" 
+                className={`ml-2 text-xs px-1.5 py-0 transition-colors ${
+                  activeTab === tab.value 
+                    ? 'bg-purple-100 text-purple-700 border-purple-300' 
+                    : 'bg-gray-100 text-gray-600'
+                }`}
+              >
                 {tab.count}
               </Badge>
             </TabsTrigger>

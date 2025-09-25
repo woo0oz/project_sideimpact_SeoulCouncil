@@ -30,7 +30,7 @@ export function AgendaCard({
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border-purple-200">
                 {category}
               </Badge>
               <ImpactBadge level={impact} />
