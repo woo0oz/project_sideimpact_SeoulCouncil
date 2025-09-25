@@ -72,7 +72,7 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold mb-2">🍆 가지농장</h1>
           <p className="text-muted-foreground">
-            {initialDistrict ? '설정을 수정해보세요' : '가까운 지역의 의회 소식을 맞춤형으로 받아보세요'}
+            {initialDistrict ? '설정을 변경해보세요' : '가까운 지역의 의회 소식을 맞춤형으로 받아보세요'}
           </p>
         </div>
 
@@ -203,7 +203,7 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </>
                 ) : (
-                  initialDistrict ? '수정 완료' : '설정 완료'
+                  initialDistrict ? '변경 완료' : '설정 완료'
                 )}
               </Button>
             </div>
