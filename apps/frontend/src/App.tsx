@@ -21,6 +21,7 @@ export default function App() {
   const [agendas, setAgendas] = useState<Agenda[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // 온보딩 완료 핸들러
   const handleOnboardingComplete = async (data: UserPreferences) => {
@@ -86,25 +87,44 @@ export default function App() {
   // 필터링된 안건 목록
   const filteredAgendas = (() => {
     let filtered = agendas.filter((agenda) => {
+      // 먼저 탭별 필터링 적용
+      let tabFiltered = false;
       switch (activeTab) {
         case "high-impact":
           // 우리 동네 데이터 중 높은 영향을 가진 데이터
-          return userPreferences 
+          tabFiltered = userPreferences 
             ? agenda.district.includes(userPreferences.district) && agenda.impact === "high"
             : agenda.impact === "high";
+          break;
         case "recent":
           // 우리 동네 소식 중 한 달 안의 데이터
           const isRecent = new Date(agenda.date.replace(/\./g, "-")) > 
             new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-          return userPreferences 
+          tabFiltered = userPreferences 
             ? agenda.district.includes(userPreferences.district) && isRecent
             : isRecent;
+          break;
         case "my-area":
           // 우리 동네 전체 소식
-          return userPreferences ? agenda.district.includes(userPreferences.district) : true;
+          tabFiltered = userPreferences ? agenda.district.includes(userPreferences.district) : true;
+          break;
         default:
-          return true;
+          tabFiltered = true;
       }
+
+      // 검색어 필터링 적용
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        const matchesSearch = 
+          agenda.title.toLowerCase().includes(query) ||
+          agenda.summary.toLowerCase().includes(query) ||
+          agenda.category.toLowerCase().includes(query) ||
+          agenda.district.toLowerCase().includes(query);
+        
+        return tabFiltered && matchesSearch;
+      }
+
+      return tabFiltered;
     });
 
     // 최근 안건 탭인 경우 최신순으로 정렬
@@ -138,7 +158,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background font-[Pretendard]">
-      <Header />
+      <Header 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
       <main className="container mx-auto px-4 py-6 max-w-4xl">
         {/* 온보딩 카드 */}
@@ -153,6 +176,16 @@ export default function App() {
         {error && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
+        {/* 검색 결과 정보 */}
+        {searchQuery.trim() && (
+          <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+            <p className="text-sm text-purple-700">
+              <span className="font-medium">"{searchQuery}"</span> 검색결과 
+              <span className="font-medium ml-1">{filteredAgendas.length}건</span>
+            </p>
           </div>
         )}
 
@@ -178,8 +211,16 @@ export default function App() {
             {filteredAgendas.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">
-                  해당 조건의 안건이 없습니다.
+                  {searchQuery.trim() 
+                    ? `"${searchQuery}" 검색 결과가 없습니다.`
+                    : '해당 조건의 안건이 없습니다.'
+                  }
                 </p>
+                {searchQuery.trim() && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    다른 키워드로 검색해보세요.
+                  </p>
+                )}
               </div>
             ) : (
               filteredAgendas.map((agenda) => (
