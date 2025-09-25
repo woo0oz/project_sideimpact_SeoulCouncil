@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users, Clock, ExternalLink } from 'lucide-react'
+import { Calendar, MapPin, ExternalLink } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
@@ -17,9 +17,6 @@ interface DetailModalProps {
     date: string
     category: string
     fullContent: string
-    budget?: string
-    implementationDate?: string
-    relatedDepartment?: string
   } | null
 }
 
@@ -78,43 +75,7 @@ export function DetailModal({ isOpen, onClose, agenda }: DetailModalProps) {
           
           <Separator />
           
-          {/* 상세 정보 */}
-          <div className="border border-gray-200 rounded-lg p-4">
-            <h4 className="font-semibold mb-4">📊 상세 정보</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {agenda.budget && (
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="font-medium text-sm">예산 규모</span>
-                </div>
-                <p className="text-sm text-muted-foreground pl-4">{agenda.budget}</p>
-              </div>
-            )}
-            
-            {agenda.implementationDate && (
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4 text-green-600" />
-                  <span className="font-medium text-sm">시행 예정일</span>
-                </div>
-                <p className="text-sm text-muted-foreground pl-6">{agenda.implementationDate}</p>
-              </div>
-            )}
-            
-            {agenda.relatedDepartment && (
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Users className="w-4 h-4 text-purple-600" />
-                  <span className="font-medium text-sm">담당 부서</span>
-                </div>
-                <p className="text-sm text-muted-foreground pl-6">{agenda.relatedDepartment}</p>
-              </div>
-            )}
-            </div>
-          </div>
-          
-          <Separator />
+
           
           {/* 전문 보기 */}
           <div className="border border-gray-200 rounded-lg p-4">

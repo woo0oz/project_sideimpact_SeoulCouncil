@@ -8,17 +8,14 @@ const IS_DEVELOPMENT = import.meta.env.VITE_ENVIRONMENT !== 'production';
 const mockAgendas: Agenda[] = [
   {
     id: "1",
-    title: "동작구 주택가 주차장 확충 예산 승인",
-    summary: "상도동, 노량진동 일대 공영주차장 3개소 신설 예산 12억원 승인. 기존 주차난 해소를 위해 2024년 상반기 착공 예정.",
+    title: "동작구 상도동 주차장 확충 사업",
+    summary: "주택가 주차난 해소를 위한 공영주차장 건설. 상도동 3개소, 노량진동 2개소에 총 150대 규모.",
     impact: "high" as const,
     impactDescription: "우리 동네 주차난이 크게 개선될 예정입니다. 상도동 거주자는 집 근처 주차공간이 약 150대 늘어납니다.",
     district: "서울 동작구",
     date: "2024.01.15",
     category: "교통",
     fullContent: '동작구의회는 제1차 정례회에서 주택가 주차장 확충 사업에 대한 예산안을 만장일치로 가결했다. 이번 사업은 상도동 3개소, 노량진동 2개소에 총 150대 규모의 공영주차장을 신설하는 내용이다. 총 사업비는 12억원으로, 토지매입비 8억원, 시설비 4억원으로 구성된다. 구의회 교통위원회는 "지역 주민들의 오랜 숙원사업이었던 주차난 해소에 큰 도움이 될 것"이라고 밝혔다.',
-    budget: "12억원 (토지매입비 8억원, 시설비 4억원)",
-    implementationDate: "2024년 6월 착공 예정",
-    relatedDepartment: "동작구 교통행정과",
   },
   {
     id: "2",
@@ -30,9 +27,6 @@ const mockAgendas: Agenda[] = [
     date: "2024.01.12",
     category: "복지",
     fullContent: "동작구의회는 흑석동 일대 5개 어린이 놀이터의 안전시설 개선사업을 승인했다. 10년 이상 된 노후 놀이기구를 최신 안전기준에 맞춰 교체하고, 놀이구역 주변에 안전펜스를 추가로 설치한다. 또한 놀이터 바닥재를 충격흡수 소재로 교체하여 어린이들의 안전을 강화한다.",
-    budget: "3억원",
-    implementationDate: "2024년 3월 시작",
-    relatedDepartment: "동작구 여성가족과",
   },
   {
     id: "3",
@@ -44,9 +38,6 @@ const mockAgendas: Agenda[] = [
     date: "2024.01.10",
     category: "환경",
     fullContent: "상도로 일대 1.2km 구간의 보도를 기존 1.5m에서 2.0m로 확장하고, 노후된 가로수 80그루를 새로 식재한다. 보행자와 자전거 이용자의 안전을 위해 별도의 자전거 도로도 신설할 예정이다.",
-    budget: "8억원",
-    implementationDate: "2024년 4월 착공",
-    relatedDepartment: "동작구 도시계획과",
   },
   {
     id: "4",
@@ -58,9 +49,6 @@ const mockAgendas: Agenda[] = [
     date: "2024.01.08",
     category: "교육",
     fullContent: "사당동 공공도서관의 운영시간을 기존 평일 오후 6시에서 오후 10시까지, 주말은 오후 5시에서 오후 8시까지 연장하기로 결정했다. 이에 따른 추가 인건비와 관리비용으로 연간 2억원의 예산이 투입된다.",
-    budget: "연간 2억원 (인건비, 관리비)",
-    implementationDate: "2024년 2월 1일부터",
-    relatedDepartment: "동작구 교육지원과",
   },
 ];
 

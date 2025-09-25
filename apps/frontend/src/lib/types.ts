@@ -15,9 +15,6 @@ export interface Agenda {
   date: string;
   category: string;
   fullContent: string;
-  budget: string;
-  implementationDate: string;
-  relatedDepartment: string;
 }
 
 // API 응답 타입
