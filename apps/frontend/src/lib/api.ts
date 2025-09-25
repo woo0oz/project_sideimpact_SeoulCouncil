@@ -16,6 +16,7 @@ const mockAgendas: Agenda[] = [
     date: "2024.01.15",
     category: "교통",
     fullContent: '동작구의회는 제1차 정례회에서 주택가 주차장 확충 사업에 대한 예산안을 만장일치로 가결했다. 이번 사업은 상도동 3개소, 노량진동 2개소에 총 150대 규모의 공영주차장을 신설하는 내용이다. 총 사업비는 12억원으로, 토지매입비 8억원, 시설비 4억원으로 구성된다. 구의회 교통위원회는 "지역 주민들의 오랜 숙원사업이었던 주차난 해소에 큰 도움이 될 것"이라고 밝혔다.',
+    originalUrl: "https://dongjak.go.kr/council/agenda/2024/001", // 원문 URL 추가
   },
   {
     id: "2",
@@ -38,6 +39,7 @@ const mockAgendas: Agenda[] = [
     date: "2024.01.10",
     category: "환경",
     fullContent: "상도로 일대 1.2km 구간의 보도를 기존 1.5m에서 2.0m로 확장하고, 노후된 가로수 80그루를 새로 식재한다. 보행자와 자전거 이용자의 안전을 위해 별도의 자전거 도로도 신설할 예정이다.",
+    originalUrl: "https://dongjak.go.kr/council/agenda/2024/003", // 원문 URL 추가
   },
   {
     id: "4",

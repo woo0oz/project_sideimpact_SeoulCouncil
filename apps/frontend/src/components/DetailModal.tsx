@@ -17,12 +17,19 @@ interface DetailModalProps {
     date: string
     category: string
     fullContent: string
+    originalUrl?: string
   } | null
 }
 
 export function DetailModal({ isOpen, onClose, agenda }: DetailModalProps) {
   if (!agenda) return null
-  
+
+  const handleOriginalUrlClick = () => {
+    if (agenda.originalUrl) {
+      window.open(agenda.originalUrl, '_blank', 'noopener,noreferrer')
+    }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
@@ -87,10 +94,25 @@ export function DetailModal({ isOpen, onClose, agenda }: DetailModalProps) {
           
           {/* 액션 버튼 */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button className="flex-1" variant="outline">
-              <ExternalLink className="w-4 h-4 mr-2" />
-              원문 보기
-            </Button>
+            {agenda.originalUrl ? (
+              <Button 
+                className="flex-1" 
+                variant="outline"
+                onClick={handleOriginalUrlClick}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                원문 보기
+              </Button>
+            ) : (
+              <Button 
+                className="flex-1" 
+                variant="outline" 
+                disabled
+              >
+                <ExternalLink className="w-4 h-4 mr-2 opacity-50" />
+                원문이 제공되지 않는 컨텐츠입니다
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>

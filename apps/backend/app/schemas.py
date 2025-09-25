@@ -39,12 +39,7 @@ class Agenda(BaseModel):
     date: Optional[str]
     category: Optional[str]
     full_content: Optional[str]
-    budget: Optional[str]
-    implementation_date: Optional[str]
-    related_department: Optional[str]
-    view_count: Optional[int]
-    created_at: Optional[str]
-    updated_at: Optional[str]
+    original_url: Optional[str]  # 원문 URL 필드 추가
 
     class Config:
         # orm_mode = True

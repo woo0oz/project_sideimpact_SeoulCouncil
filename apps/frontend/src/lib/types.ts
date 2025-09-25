@@ -15,6 +15,7 @@ export interface Agenda {
   date: string;
   category: string;
   fullContent: string;
+  originalUrl?: string; // 원문 URL (선택적)
 }
 
 // API 응답 타입
