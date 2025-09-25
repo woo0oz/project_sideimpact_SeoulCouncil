@@ -16,6 +16,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedAgenda, setSelectedAgenda] = useState<Agenda | null>(null);
   const [isOnboardingCompleted, setIsOnboardingCompleted] = useState(false);
+  const [isEditingPreferences, setIsEditingPreferences] = useState(false);
   const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
   const [agendas, setAgendas] = useState<Agenda[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,26 @@ export default function App() {
     
     // 개인화된 안건 데이터 로드
     await loadPersonalizedAgendas(data);
+  };
+
+  // 사용자 설정 편집 핸들러
+  const handleEditPreferences = () => {
+    setIsEditingPreferences(true);
+  };
+
+  // 설정 편집 완료 핸들러
+  const handleEditComplete = async (data: UserPreferences) => {
+    setUserPreferences(data);
+    setIsEditingPreferences(false);
+    
+    // 사용자 선호도 저장 및 안건 다시 로드
+    try {
+      await saveUserPreferences(data);
+      await loadPersonalizedAgendas(data);
+    } catch (err) {
+      console.error('Failed to save updated preferences:', err);
+      setError('설정 저장에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   // 개인화된 안건 데이터 로드
@@ -98,10 +119,20 @@ export default function App() {
     return filtered;
   })();
 
-  // 온보딩이 완료되지 않았으면 온보딩 페이지 표시
+  // 온보딩이 완료되지 않았거나 편집 모드면 온보딩 페이지 표시
   if (!isOnboardingCompleted) {
     return (
       <OnboardingPage onComplete={handleOnboardingComplete} />
+    );
+  }
+
+  if (isEditingPreferences) {
+    return (
+      <OnboardingPage 
+        onComplete={handleEditComplete}
+        initialDistrict={userPreferences?.district}
+        initialInterests={userPreferences?.interests}
+      />
     );
   }
 
@@ -115,6 +146,7 @@ export default function App() {
           isCompleted={isOnboardingCompleted}
           district={userPreferences?.district}
           interests={userPreferences?.interests}
+          onEdit={handleEditPreferences}
         />
 
         {/* 에러 메시지 */}

@@ -7,6 +7,8 @@ import { Progress } from './ui/progress'
 
 interface OnboardingPageProps {
   onComplete: (data: { district: string; interests: string[] }) => void
+  initialDistrict?: string
+  initialInterests?: string[]
 }
 
 const SEOUL_DISTRICTS = [
@@ -26,10 +28,10 @@ const INTEREST_CATEGORIES = [
   { id: 'health', name: '보건', emoji: '🏥', description: '의료, 건강, 위생' }
 ]
 
-export function OnboardingPage({ onComplete }: OnboardingPageProps) {
-  const [step, setStep] = useState(1)
-  const [selectedDistrict, setSelectedDistrict] = useState('')
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([])
+export function OnboardingPage({ onComplete, initialDistrict = '', initialInterests = [] }: OnboardingPageProps) {
+  const [step, setStep] = useState(1) // 편집 모드에서도 지역구부터 다시 선택할 수 있도록 1부터 시작
+  const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict)
+  const [selectedInterests, setSelectedInterests] = useState<string[]>(initialInterests)
 
   const handleDistrictSelect = (district: string) => {
     setSelectedDistrict(district)
@@ -69,7 +71,9 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
         {/* 헤더 */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold mb-2">🍆 가지농장</h1>
-          <p className="text-muted-foreground">가까운 지역의 의회 소식을 맞춤형으로 받아보세요</p>
+          <p className="text-muted-foreground">
+            {initialDistrict ? '설정을 수정해보세요' : '가까운 지역의 의회 소식을 맞춤형으로 받아보세요'}
+          </p>
         </div>
 
         {/* 진행률 */}
@@ -199,7 +203,7 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </>
                 ) : (
-                  '설정 완료'
+                  initialDistrict ? '수정 완료' : '설정 완료'
                 )}
               </Button>
             </div>
