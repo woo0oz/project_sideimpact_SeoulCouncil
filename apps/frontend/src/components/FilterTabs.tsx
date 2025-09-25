@@ -1,18 +1,51 @@
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { Badge } from './ui/badge'
 import { Filter } from 'lucide-react'
+import type { Agenda, UserPreferences } from '../lib/types'
 
 interface FilterTabsProps {
   activeTab: string
   onTabChange: (value: string) => void
+  agendas: Agenda[]
+  userPreferences: UserPreferences | null
 }
 
-export function FilterTabs({ activeTab, onTabChange }: FilterTabsProps) {
+export function FilterTabs({ activeTab, onTabChange, agendas, userPreferences }: FilterTabsProps) {
+  // 각 탭별 실제 안건 수 계산
+  const getTabCounts = () => {
+    const all = agendas.length;
+    
+    // 우리 동네 데이터 중 높은 영향을 가진 데이터
+    const highImpact = agendas.filter(agenda => 
+      userPreferences 
+        ? agenda.district.includes(userPreferences.district) && agenda.impact === "high"
+        : agenda.impact === "high"
+    ).length;
+    
+    // 우리 동네 소식 중 한 달 안의 데이터
+    const recent = agendas.filter(agenda => {
+      const isRecent = new Date(agenda.date.replace(/\./g, "-")) > 
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      return userPreferences 
+        ? agenda.district.includes(userPreferences.district) && isRecent
+        : isRecent;
+    }).length;
+    
+    // 우리 동네 전체 소식
+    const myArea = agendas.filter(agenda => 
+      userPreferences ? agenda.district.includes(userPreferences.district) : false
+    ).length;
+
+    return { all, highImpact, recent, myArea };
+  };
+
+  const counts = getTabCounts();
+  
   const tabs = [
-    { value: 'all', label: '전체', count: 12 },
-    { value: 'high-impact', label: '높은 영향', count: 3 },
-    { value: 'recent', label: '최근 안건', count: 8 },
-    { value: 'my-area', label: '우리 동네', count: 5 }
+    { value: 'all', label: '전체', count: counts.all },
+    { value: 'high-impact', label: '높은 영향', count: counts.highImpact },
+    { value: 'recent', label: '최근 안건', count: counts.recent },
+    { value: 'my-area', label: '우리 동네', count: counts.myArea }
   ]
   
   return (

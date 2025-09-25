@@ -63,21 +63,40 @@ export default function App() {
   };
 
   // 필터링된 안건 목록
-  const filteredAgendas = agendas.filter((agenda) => {
-    switch (activeTab) {
-      case "high-impact":
-        return agenda.impact === "high";
-      case "recent":
-        return (
-          new Date(agenda.date.replace(/\./g, "-")) >
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 최근 7일
-        );
-      case "my-area":
-        return userPreferences ? agenda.district.includes(userPreferences.district) : true;
-      default:
-        return true;
+  const filteredAgendas = (() => {
+    let filtered = agendas.filter((agenda) => {
+      switch (activeTab) {
+        case "high-impact":
+          // 우리 동네 데이터 중 높은 영향을 가진 데이터
+          return userPreferences 
+            ? agenda.district.includes(userPreferences.district) && agenda.impact === "high"
+            : agenda.impact === "high";
+        case "recent":
+          // 우리 동네 소식 중 한 달 안의 데이터
+          const isRecent = new Date(agenda.date.replace(/\./g, "-")) > 
+            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+          return userPreferences 
+            ? agenda.district.includes(userPreferences.district) && isRecent
+            : isRecent;
+        case "my-area":
+          // 우리 동네 전체 소식
+          return userPreferences ? agenda.district.includes(userPreferences.district) : true;
+        default:
+          return true;
+      }
+    });
+
+    // 최근 안건 탭인 경우 최신순으로 정렬
+    if (activeTab === "recent") {
+      filtered = filtered.sort((a, b) => {
+        const dateA = new Date(a.date.replace(/\./g, "-"));
+        const dateB = new Date(b.date.replace(/\./g, "-"));
+        return dateB.getTime() - dateA.getTime(); // 최신순 정렬
+      });
     }
-  });
+
+    return filtered;
+  })();
 
   // 온보딩이 완료되지 않았으면 온보딩 페이지 표시
   if (!isOnboardingCompleted) {
@@ -109,6 +128,8 @@ export default function App() {
         <FilterTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          agendas={agendas}
+          userPreferences={userPreferences}
         />
 
         {/* 로딩 상태 */}
