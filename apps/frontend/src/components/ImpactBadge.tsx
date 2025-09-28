@@ -23,9 +23,10 @@ export function ImpactBadge({ level, text }: ImpactBadgeProps) {
       defaultText: '낮은 영향'
     }
   }
-  
-  const config = configs[level]
-  
+
+  // level 값이 없거나 잘못된 경우 기본값 'high'로 처리
+  const config = configs[level] ?? configs['high']
+
   return (
     <Badge className={`${config.color} font-medium px-2 py-1`}>
       <span className="mr-1">{config.emoji}</span>

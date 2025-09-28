@@ -66,15 +66,27 @@ export default function App() {
     
     try {
       const response = await fetchPersonalizedAgendas(preferences);
-      setAgendas(response.agendas);
+      const convertAgenda = (row: any): Agenda => ({
+  id: row.agenda_id ?? row.id,
+  title: row.agenda_title ?? row.title,
+  summary: row.agenda_summary ?? row.summary,
+  impact: row.agenda_impact ?? row.impact ?? 'high',
+  category: row.agenda_interests ?? row.category,
+  fullContent: row.agenda_full_text ?? row.fullContent,
+  district: row.district ?? '',
+  date: row.date ?? '',
+  impactDescription: row.agenda_impact ?? row.impactDescription ?? '',
+  originalUrl: row.originalUrl ?? undefined
+      });
+      setAgendas((response.agendas ?? []).map(convertAgenda));
     } catch (err) {
       setError('안건 데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
       console.error('Failed to load personalized agendas:', err);
       
       // 에러 발생시 전체 안건 데이터로 fallback
       try {
-        const fallbackResponse = await fetchAllAgendas();
-        setAgendas(fallbackResponse.agendas);
+  const fallbackResponse = await fetchAllAgendas();
+  setAgendas((fallbackResponse.agendas ?? []).map(convertAgenda));
         setError('개인화된 데이터 로드에 실패했지만, 전체 안건을 표시합니다.');
       } catch (fallbackErr) {
         console.error('Fallback also failed:', fallbackErr);
@@ -249,4 +261,8 @@ export default function App() {
       </main>
     </div>
   );
+}
+
+function convertAgenda(value: Agenda, index: number, array: Agenda[]): Agenda {
+  throw new Error("Function not implemented.");
 }

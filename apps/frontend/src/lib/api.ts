@@ -1,8 +1,11 @@
 import { UserPreferences, Agenda, AgendasResponse, FilterOptions, ApiError } from './types';
 
 // 환경 설정 (Vite 방식)
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://gaji.ai.kr/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 const IS_DEVELOPMENT = import.meta.env.VITE_ENVIRONMENT !== 'production';
+
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('IS_DEVELOPMENT:', IS_DEVELOPMENT);
 
 // 임시 목업 데이터
 const mockAgendas: Agenda[] = [
@@ -154,42 +157,54 @@ export async function fetchAllAgendas(filters?: FilterOptions): Promise<AgendasR
   // TODO: 백엔드 연결시 실제 API 호출로 변경
   if (!IS_DEVELOPMENT) {
     try {
-      const queryParams = filters ? `?${new URLSearchParams(filters as Record<string, string>)}` : '';
-      return await apiRequest<AgendasResponse>(`/agendas${queryParams}`);
+      // Cloud Run API를 환경 변수(API_BASE_URL)로 통일
+      const response = await fetch(`${API_BASE_URL}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          district: filters?.district || "",
+          category: filters?.category || "",
+          impact: filters?.impact || "",
+          dateFrom: filters?.dateFrom || "",
+          dateTo: filters?.dateTo || "",
+          limit: filters?.limit || 20,
+          offset: filters?.offset || 0,
+        })
+      });
+      if (!response.ok) throw new Error("서버 오류 발생");
+      const data = await response.json();
+      // 서버에서 받은 필드명을 프론트엔드에서 기대하는 형태로 변환
+      const agendas = Array.isArray(data)
+        ? data.map(row => ({
+            id: row.agenda_id,
+            title: row.agenda_title,
+            summary: row.agenda_summary,
+            impact: row.agenda_impact,
+            category: row.agenda_interests,
+            fullContent: row.agenda_full_text
+          }))
+        : [];
+      return {
+        agendas,
+        message: 'AlloyDB에서 데이터를 성공적으로 불러옴',
+        total: agendas.length,
+      };
     } catch (error) {
-      console.warn('API call failed, falling back to mock data:', error);
+      console.error('Cloud Run API 호출 실패:', error);
+      return {
+        agendas: [],
+        message: '데이터를 불러오지 못했습니다',
+        total: 0,
+      };
     }
   }
 
+  // 개발 환경에서는 목업 데이터 사용
   console.log('Using mock data - Backend will be connected later');
-  
-  let filteredAgendas = [...mockAgendas];
-  
-  // 필터 적용
-  if (filters) {
-    if (filters.district) {
-      filteredAgendas = filteredAgendas.filter(agenda => 
-        agenda.district.includes(filters.district!)
-      );
-    }
-    
-    if (filters.category) {
-      filteredAgendas = filteredAgendas.filter(agenda => 
-        agenda.category === filters.category
-      );
-    }
-    
-    if (filters.impact) {
-      filteredAgendas = filteredAgendas.filter(agenda => 
-        agenda.impact === filters.impact
-      );
-    }
-  }
-
   return {
-    agendas: filteredAgendas,
-    message: 'All mock data loaded successfully',
-    total: filteredAgendas.length,
+    agendas: mockAgendas,
+    message: 'Mock data loaded successfully',
+    total: mockAgendas.length,
   };
 }
 
