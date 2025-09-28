@@ -65,12 +65,14 @@ export default function App() {
     setError(null);
     
     try {
-      const response = await fetchPersonalizedAgendas(preferences);
+  const response = await fetchPersonalizedAgendas(preferences);
+  console.log('API personalized:', response.personalized);
+  console.log('isArray:', Array.isArray(response.personalized));
       const convertAgenda = (row: any): Agenda => ({
   id: row.agenda_id ?? row.id,
   title: row.agenda_title ?? row.title,
   summary: row.agenda_summary ?? row.summary,
-  impact: row.agenda_impact ?? row.impact ?? 'high',
+  impact: row.agenda_impact ?? row.impact,
   category: row.agenda_interests ?? row.category,
   fullContent: row.agenda_full_text ?? row.fullContent,
   district: row.district ?? '',
@@ -96,58 +98,65 @@ export default function App() {
     }
   };
 
+  // 안전한 날짜 파싱 함수
+  function parseDate(dateStr: string): Date {
+    return new Date(dateStr.replace(/\./g, "-").trim());
+  }
+
+  // 항상 최신순(내림차순)으로 정렬된 agendas 사용
+  const sortedAgendas = agendas.slice().sort((a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime());
+
   // 필터링된 안건 목록
   const filteredAgendas = (() => {
-    let filtered = agendas.filter((agenda) => {
+    let filtered = sortedAgendas.filter((agenda) => {
+      // 콘솔로 값 확인
+      console.log('interests:', userPreferences?.interests);
+      console.log('agenda.category:', agenda.category);
       // 먼저 탭별 필터링 적용
       let tabFiltered = false;
       switch (activeTab) {
         case "high-impact":
-          // 우리 동네 데이터 중 높은 영향을 가진 데이터
           tabFiltered = userPreferences 
             ? agenda.district.includes(userPreferences.district) && agenda.impact === "high"
             : agenda.impact === "high";
           break;
         case "recent":
-          // 우리 동네 소식 중 한 달 안의 데이터
-          const isRecent = new Date(agenda.date.replace(/\./g, "-")) > 
-            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+          const isRecent = parseDate(agenda.date) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
           tabFiltered = userPreferences 
             ? agenda.district.includes(userPreferences.district) && isRecent
             : isRecent;
           break;
         case "my-area":
-          // 우리 동네 전체 소식
           tabFiltered = userPreferences ? agenda.district.includes(userPreferences.district) : true;
           break;
         default:
           tabFiltered = true;
       }
 
+      // 관심사(카테고리) 필터링 (한글 기준, 배열 대응)
+      const interests = userPreferences?.interests ?? [];
+      const agendaCategories = Array.isArray(agenda.category) ? agenda.category : [agenda.category];
+      if (
+        interests.length > 0 &&
+        !interests.some(interest => agendaCategories.includes(interest))
+      ) {
+        return false;
+      }
+
       // 검색어 필터링 적용
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
+        // agenda.category가 배열일 수 있으므로 join 처리
+        const categoryStr = Array.isArray(agenda.category) ? agenda.category.join(',') : agenda.category;
         const matchesSearch = 
           agenda.title.toLowerCase().includes(query) ||
           agenda.summary.toLowerCase().includes(query) ||
-          agenda.category.toLowerCase().includes(query) ||
+          categoryStr.toLowerCase().includes(query) ||
           agenda.district.toLowerCase().includes(query);
-        
         return tabFiltered && matchesSearch;
       }
-
       return tabFiltered;
     });
-
-    // 최근 안건 탭인 경우 최신순으로 정렬
-    if (activeTab === "recent") {
-      filtered = filtered.sort((a, b) => {
-        const dateA = new Date(a.date.replace(/\./g, "-"));
-        const dateB = new Date(b.date.replace(/\./g, "-"));
-        return dateB.getTime() - dateA.getTime(); // 최신순 정렬
-      });
-    }
-
     return filtered;
   })();
 

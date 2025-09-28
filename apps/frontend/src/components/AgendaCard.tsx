@@ -24,15 +24,19 @@ export function AgendaCard({
   category,
   onClick
 }: AgendaCardProps) {
+  // category가 배열이면 여러 Badge로, 아니면 기존대로
+  const categories = Array.isArray(category) ? category : [category];
   return (
     <Card className="mb-4 hover:shadow-md transition-shadow cursor-pointer" onClick={onClick}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
-              <Badge variant="outline" className="text-xs bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border-purple-200">
-                {category}
-              </Badge>
+              {categories.map((cat, idx) => (
+                <Badge key={cat + idx} variant="outline" className="text-xs bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border-purple-200">
+                  {cat}
+                </Badge>
+              ))}
               <ImpactBadge level={impact} />
             </div>
             <h3 className="font-semibold leading-tight mb-2">{title}</h3>

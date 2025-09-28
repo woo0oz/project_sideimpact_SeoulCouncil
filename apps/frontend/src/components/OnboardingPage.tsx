@@ -37,11 +37,15 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
     setSelectedDistrict(district)
   }
 
+  // 관심사 선택 시 한글 name으로 저장
   const handleInterestToggle = (interestId: string) => {
+    const category = INTEREST_CATEGORIES.find(cat => cat.id === interestId)
+    if (!category) return;
+    const interestName = category.name;
     setSelectedInterests(prev => 
-      prev.includes(interestId) 
-        ? prev.filter(id => id !== interestId)
-        : [...prev, interestId]
+      prev.includes(interestName)
+        ? prev.filter(name => name !== interestName)
+        : [...prev, interestName]
     )
   }
 
@@ -51,7 +55,7 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
     } else if (step === 2 && selectedInterests.length > 0) {
       onComplete({
         district: selectedDistrict,
-        interests: selectedInterests
+        interests: selectedInterests // 한글 name 배열로 전달
       })
     }
   }
@@ -129,34 +133,37 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
             ) : (
               // 2단계: 관심사 선택
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {INTEREST_CATEGORIES.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => handleInterestToggle(category.id)}
-                    className={`p-4 text-left rounded-lg border transition-all hover:shadow-sm ${
-                      selectedInterests.includes(category.id)
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white border-gray-200 hover:border-blue-200'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <span className="text-xl">{category.emoji}</span>
-                      <div className="flex-1">
-                        <div className="font-medium">{category.name}</div>
-                        <div className={`text-xs ${
-                          selectedInterests.includes(category.id) 
-                            ? 'text-blue-100' 
-                            : 'text-muted-foreground'
-                        }`}>
-                          {category.description}
+                {INTEREST_CATEGORIES.map((category) => {
+                  const isSelected = selectedInterests.includes(category.name);
+                  return (
+                    <button
+                      key={category.id}
+                      onClick={() => handleInterestToggle(category.id)}
+                      className={`p-4 text-left rounded-lg border transition-all hover:shadow-sm ${
+                        isSelected
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : 'bg-white border-gray-200 hover:border-blue-200'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <span className="text-xl">{category.emoji}</span>
+                        <div className="flex-1">
+                          <div className="font-medium">{category.name}</div>
+                          <div className={`text-xs ${
+                            isSelected
+                              ? 'text-blue-100'
+                              : 'text-muted-foreground'
+                          }`}>
+                            {category.description}
+                          </div>
                         </div>
+                        {isSelected && (
+                          <CheckCircle className="h-5 w-5" />
+                        )}
                       </div>
-                      {selectedInterests.includes(category.id) && (
-                        <CheckCircle className="h-5 w-5" />
-                      )}
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
             )}
 
@@ -173,11 +180,11 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                 <p className="text-sm font-medium mb-2">선택된 관심 주제:</p>
                 <div className="flex flex-wrap gap-2">
-                  {selectedInterests.map(interestId => {
-                    const interest = INTEREST_CATEGORIES.find(cat => cat.id === interestId)
+                  {selectedInterests.map(interestName => {
+                    const interest = INTEREST_CATEGORIES.find(cat => cat.name === interestName)
                     return (
-                      <Badge key={interestId} variant="secondary">
-                        {interest?.emoji} {interest?.name}
+                      <Badge key={interestName} variant="secondary">
+                        {interest?.emoji} {interestName}
                       </Badge>
                     )
                   })}

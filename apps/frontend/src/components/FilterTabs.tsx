@@ -11,19 +11,38 @@ interface FilterTabsProps {
 }
 
 export function FilterTabs({ activeTab, onTabChange, agendas, userPreferences }: FilterTabsProps) {
-  // 각 탭별 실제 안건 수 계산
+  // 관심사(카테고리) 필터링 함수 (한글 기준)
+  const interestFilter = (agenda: Agenda) => {
+    // interests는 한글 카테고리 배열이어야 함
+    const interests = userPreferences?.interests ?? [];
+    const agendaCategories = Array.isArray(agenda.category) ? agenda.category : [agenda.category];
+    // 콘솔로 값 확인
+    console.log('interests:', interests);
+    console.log('agendaCategories:', agendaCategories);
+    // interests 중 하나라도 agendaCategories에 포함되면 true
+    if (
+      interests.length > 0 &&
+      !interests.some(interest => agendaCategories.includes(interest))
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  // 각 탭별 실제 안건 수 계산 (관심사 필터링 반영)
   const getTabCounts = () => {
-    const all = agendas.length;
+    const filteredAgendas = agendas.filter(interestFilter);
+    const all = filteredAgendas.length;
     
     // 우리 동네 데이터 중 높은 영향을 가진 데이터
-    const highImpact = agendas.filter(agenda => 
+    const highImpact = filteredAgendas.filter(agenda => 
       userPreferences 
         ? agenda.district.includes(userPreferences.district) && agenda.impact === "high"
         : agenda.impact === "high"
     ).length;
     
     // 우리 동네 소식 중 한 달 안의 데이터
-    const recent = agendas.filter(agenda => {
+    const recent = filteredAgendas.filter(agenda => {
       const isRecent = new Date(agenda.date.replace(/\./g, "-")) > 
         new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       return userPreferences 
@@ -32,7 +51,7 @@ export function FilterTabs({ activeTab, onTabChange, agendas, userPreferences }:
     }).length;
     
     // 우리 동네 전체 소식
-    const myArea = agendas.filter(agenda => 
+    const myArea = filteredAgendas.filter(agenda => 
       userPreferences ? agenda.district.includes(userPreferences.district) : false
     ).length;
 

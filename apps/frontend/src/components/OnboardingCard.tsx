@@ -1,3 +1,4 @@
+
 import { MapPin, Tag, ChevronRight } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 import { Button } from './ui/button'
@@ -10,21 +11,9 @@ interface OnboardingCardProps {
   onEdit?: () => void
 }
 
-const INTEREST_LABELS: Record<string, string> = {
-  traffic: '교통',
-  environment: '환경',
-  welfare: '복지',
-  economy: '경제',
-  education: '교육',
-  safety: '안전',
-  culture: '문화',
-  health: '보건'
-}
-
 export function OnboardingCard({ isCompleted = false, district, interests = [], onEdit }: OnboardingCardProps) {
   if (isCompleted) {
-    const displayInterests = interests.map(id => INTEREST_LABELS[id] || id)
-    
+    // interests가 한글 카테고리 배열로 들어오면 바로 표시
     return (
       <Card className="mb-6 bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
         <CardContent className="p-4">
@@ -35,13 +24,13 @@ export function OnboardingCard({ isCompleted = false, district, interests = [], 
                 <span className="font-medium">서울 {district}</span>
               </div>
               <div className="flex items-center space-x-2">
-                {displayInterests.slice(0, 3).map((interest) => (
+                {interests.slice(0, 3).map((interest) => (
                   <Badge key={interest} variant="secondary" className="text-xs">
                     {interest}
                   </Badge>
                 ))}
-                {displayInterests.length > 3 && (
-                  <span className="text-xs text-muted-foreground">+{displayInterests.length - 3}개</span>
+                {interests.length > 3 && (
+                  <span className="text-xs text-muted-foreground">+{interests.length - 3}개</span>
                 )}
               </div>
             </div>
