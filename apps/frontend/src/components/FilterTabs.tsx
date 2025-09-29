@@ -16,9 +16,6 @@ export function FilterTabs({ activeTab, onTabChange, agendas, userPreferences }:
     // interests는 한글 카테고리 배열이어야 함
     const interests = userPreferences?.interests ?? [];
     const agendaCategories = Array.isArray(agenda.category) ? agenda.category : [agenda.category];
-    // 콘솔로 값 확인
-    console.log('interests:', interests);
-    console.log('agendaCategories:', agendaCategories);
     // interests 중 하나라도 agendaCategories에 포함되면 true
     if (
       interests.length > 0 &&
