@@ -66,6 +66,8 @@ export default function App() {
     
     try {
   const response = await fetchPersonalizedAgendas(preferences);
+  console.log('API personalized:', response.personalized);
+  console.log('isArray:', Array.isArray(response.personalized));
       const convertAgenda = (row: any): Agenda => ({
   id: row.agenda_id ?? row.id,
   title: row.agenda_title ?? row.title,
@@ -107,6 +109,9 @@ export default function App() {
   // 필터링된 안건 목록
   const filteredAgendas = (() => {
     let filtered = sortedAgendas.filter((agenda) => {
+      // 콘솔로 값 확인
+      console.log('interests:', userPreferences?.interests);
+      console.log('agenda.category:', agenda.category);
       // 먼저 탭별 필터링 적용
       let tabFiltered = false;
       switch (activeTab) {
@@ -166,6 +171,8 @@ export default function App() {
     return (
       <OnboardingPage 
         onComplete={handleEditComplete}
+        initialBirthYear={userPreferences?.birthYear}
+        initialSex={userPreferences?.sex}
         initialDistrict={userPreferences?.district}
         initialInterests={userPreferences?.interests}
       />
@@ -183,6 +190,8 @@ export default function App() {
         {/* 온보딩 카드 */}
         <OnboardingCard
           isCompleted={isOnboardingCompleted}
+          birthYear={userPreferences?.birthYear}
+          sex={userPreferences?.sex}
           district={userPreferences?.district}
           interests={userPreferences?.interests}
           onEdit={handleEditPreferences}

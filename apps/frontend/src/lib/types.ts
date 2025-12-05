@@ -1,5 +1,7 @@
 // 사용자 선호도 타입
 export interface UserPreferences {
+  birthYear: number;
+  sex: string;
   district: string;
   interests: string[];
 }

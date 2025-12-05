@@ -1,28 +1,37 @@
 
-import { MapPin, Tag, ChevronRight } from 'lucide-react'
+import { MapPin, Tag, ChevronRight, User } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 
 interface OnboardingCardProps {
   isCompleted?: boolean
+  birthYear?: number
+  sex?: string
   district?: string
   interests?: string[]
   onEdit?: () => void
 }
 
-export function OnboardingCard({ isCompleted = false, district, interests = [], onEdit }: OnboardingCardProps) {
+export function OnboardingCard({ isCompleted = false, birthYear, sex, district, interests = [], onEdit }: OnboardingCardProps) {
   if (isCompleted) {
-    // interests가 한글 카테고리 배열로 들어오면 바로 표시
+    // 기본 정보 표시
     return (
       <Card className="mb-6 bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              {/* 기본 정보 */}
+              <div className="flex items-center space-x-2 text-sm">
+                <User className="h-4 w-4 text-orange-600" />
+                <span className="font-medium">{birthYear}년생 {sex}</span>
+              </div>
+              {/* 거주지 */}
               <div className="flex items-center space-x-2 text-sm">
                 <MapPin className="h-4 w-4 text-orange-600" />
                 <span className="font-medium">서울 {district}</span>
               </div>
+              {/* 관심사 */}
               <div className="flex items-center space-x-2">
                 {interests.slice(0, 3).map((interest) => (
                   <Badge key={interest} variant="secondary" className="text-xs">

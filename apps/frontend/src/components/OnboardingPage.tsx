@@ -6,10 +6,16 @@ import { Badge } from './ui/badge'
 import { Progress } from './ui/progress'
 
 interface OnboardingPageProps {
-  onComplete: (data: { district: string; interests: string[] }) => void
+  onComplete: (data: { birthYear: number; sex: string; district: string; interests: string[] }) => void
+  initialBirthYear?: number
+  initialSex?: string
   initialDistrict?: string
   initialInterests?: string[]
 }
+
+const SEX_OPTIONS = [
+  '남성', '여성'
+]
 
 const SEOUL_DISTRICTS = [
   '강남구', '강동구', '강북구', '강서구', '관악구', '광진구', '구로구', '금천구',
@@ -28,10 +34,16 @@ const INTEREST_CATEGORIES = [
   { id: 'health', name: '보건', emoji: '🏥', description: '의료, 건강, 위생' }
 ]
 
-export function OnboardingPage({ onComplete, initialDistrict = '', initialInterests = [] }: OnboardingPageProps) {
-  const [step, setStep] = useState(1) // 편집 모드에서도 지역구부터 다시 선택할 수 있도록 1부터 시작
+export function OnboardingPage({ onComplete, initialBirthYear, initialSex = '', initialDistrict = '', initialInterests = [] }: OnboardingPageProps) {
+  const [step, setStep] = useState(1)
+  const [selectedBirthYear, setSelectedBirthYear] = useState<string>(initialBirthYear?.toString() || '')
+  const [selectedSex, setSelectedSex] = useState(initialSex)
   const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict)
   const [selectedInterests, setSelectedInterests] = useState<string[]>(initialInterests)
+
+  const handleSexSelect = (sex: string) => {
+    setSelectedSex(sex)
+  }
 
   const handleDistrictSelect = (district: string) => {
     setSelectedDistrict(district)
@@ -50,10 +62,13 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
   }
 
   const handleNext = () => {
-    if (step === 1 && selectedDistrict) {
+    if (step === 1 && selectedBirthYear && selectedSex && selectedDistrict) {
       setStep(2)
     } else if (step === 2 && selectedInterests.length > 0) {
+      const birthYear = parseInt(selectedBirthYear, 10)
       onComplete({
+        birthYear: birthYear,
+        sex: selectedSex,
         district: selectedDistrict,
         interests: selectedInterests // 한글 name 배열로 전달
       })
@@ -66,7 +81,7 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
     }
   }
 
-  const canProceed = step === 1 ? selectedDistrict : selectedInterests.length > 0
+  const canProceed = step === 1 ? (selectedBirthYear && selectedSex && selectedDistrict) : selectedInterests.length > 0
   const progress = step === 1 ? 50 : 100
 
   return (
@@ -95,7 +110,7 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
               {step === 1 ? (
                 <>
                   <MapPin className="h-5 w-5 text-blue-600" />
-                  <span>거주지 선택</span>
+                  <span>기본 정보 입력</span>
                 </>
               ) : (
                 <>
@@ -106,7 +121,7 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
             </CardTitle>
             <p className="text-sm text-muted-foreground">
               {step === 1 
-                ? '현재 거주하고 계신 서울시 구를 선택해주세요'
+                ? '나이, 성별, 거주지를 입력해주세요'
                 : '관심있는 주제를 선택해주세요 (최소 1개)'
               }
             </p>
@@ -114,21 +129,103 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
 
           <CardContent className="space-y-4">
             {step === 1 ? (
-              // 1단계: 거주지 선택
-              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2">
-                {SEOUL_DISTRICTS.map((district) => (
-                  <button
-                    key={district}
-                    onClick={() => handleDistrictSelect(district)}
-                    className={`p-3 text-sm rounded-lg border transition-all hover:shadow-sm ${
-                      selectedDistrict === district
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white border-gray-200 hover:border-blue-200'
-                    }`}
-                  >
-                    {district}
-                  </button>
-                ))}
+              // 1단계: 태어난 년도, 성별, 거주지 입력
+              <div className="space-y-4">
+                {/* 태어난 년도 입력 */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">태어난 년도</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="예: 1999"
+                    value={selectedBirthYear}
+                    onChange={(e) => {
+                      const inputValue = e.target.value.trim()
+                      
+                      // 빈 입력
+                      if (inputValue === '') {
+                        setSelectedBirthYear('')
+                        return
+                      }
+                      
+                      // 숫자만 입력받도록
+                      if (!/^\d+$/.test(inputValue)) {
+                        return
+                      }
+                      
+                      // 4자리 숫자 입력된 경우에만 범위 검증
+                      if (inputValue.length <= 4) {
+                        setSelectedBirthYear(inputValue)
+                        // 4자리 모두 입력되었으면 범위 검증
+                        if (inputValue.length === 4) {
+                          const year = parseInt(inputValue, 10)
+                          if (year < 1930 || year > new Date().getFullYear()) {
+                            setSelectedBirthYear('')
+                            return
+                          }
+                        }
+                      }
+                    }}
+                    maxLength={4}
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                  />
+                  {selectedBirthYear && selectedBirthYear.length === 4 && (
+                    <p className="text-xs text-gray-500 mt-1">현재 나이: {new Date().getFullYear() - parseInt(selectedBirthYear, 10)}세</p>
+                  )}
+                </div>
+
+                {/* 성별 선택 */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">성별</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {SEX_OPTIONS.map((sex) => (
+                      <button
+                        key={sex}
+                        onClick={() => handleSexSelect(sex)}
+                        className={`p-3 text-sm rounded-lg border transition-all hover:shadow-sm ${
+                          selectedSex === sex
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'bg-white border-gray-200 hover:border-blue-200'
+                        }`}
+                      >
+                        {sex}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 거주지 선택 */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">거주지</label>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2">
+                    {SEOUL_DISTRICTS.map((district) => (
+                      <button
+                        key={district}
+                        onClick={() => handleDistrictSelect(district)}
+                        className={`p-3 text-sm rounded-lg border transition-all hover:shadow-sm ${
+                          selectedDistrict === district
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'bg-white border-gray-200 hover:border-blue-200'
+                        }`}
+                      >
+                        {district}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 선택된 항목 표시 */}
+                {(selectedBirthYear || selectedSex || selectedDistrict) && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <p className="text-sm">
+                      {selectedBirthYear && <span className="font-medium">{selectedBirthYear}년생</span>}
+                      {selectedBirthYear && selectedSex && <span className="mx-1">•</span>}
+                      {selectedSex && <span className="font-medium">{selectedSex}</span>}
+                      {(selectedBirthYear || selectedSex) && selectedDistrict && <span className="mx-1">•</span>}
+                      {selectedDistrict && <span className="font-medium">서울 {selectedDistrict}</span>}
+                    </p>
+                  </div>
+                )}
               </div>
             ) : (
               // 2단계: 관심사 선택
@@ -164,15 +261,6 @@ export function OnboardingPage({ onComplete, initialDistrict = '', initialIntere
                     </button>
                   );
                 })}
-              </div>
-            )}
-
-            {/* 선택된 항목 표시 */}
-            {step === 1 && selectedDistrict && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                <p className="text-sm">
-                  <span className="font-medium">선택된 지역:</span> 서울 {selectedDistrict}
-                </p>
               </div>
             )}
 

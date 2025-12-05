@@ -4,6 +4,9 @@ import { UserPreferences, Agenda, AgendasResponse, FilterOptions, ApiError } fro
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 const IS_DEVELOPMENT = import.meta.env.VITE_ENVIRONMENT !== 'production';
 
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('IS_DEVELOPMENT:', IS_DEVELOPMENT);
+
 // 임시 목업 데이터
 const mockAgendas: Agenda[] = [
   {
@@ -128,6 +131,9 @@ export async function fetchPersonalizedAgendas(preferences: UserPreferences): Pr
     }
   }
 
+  // 임시 목업 데이터 (선호도 기반 필터링)
+  console.log('Using mock data - Backend will be connected later');
+  console.log('User preferences:', preferences);
   
   // 사용자 선호도에 따른 간단한 필터링
   const filteredAgendas = mockAgendas.filter(agenda => {
@@ -200,6 +206,8 @@ export async function fetchAllAgendas(filters?: FilterOptions): Promise<AgendasR
     }
   }
 
+  // 개발 환경에서는 목업 데이터 사용
+  console.log('Using mock data - Backend will be connected later');
   // 최신 날짜(내림차순)로 정렬 (parseDate 사용)
   const sortedAgendas = mockAgendas.slice().sort((a, b) => {
     return parseDate(b.date).getTime() - parseDate(a.date).getTime();
@@ -244,6 +252,7 @@ export async function saveUserPreferences(preferences: UserPreferences): Promise
     }
   }
 
+  console.log('Mock: Saving user preferences:', preferences);
   return { success: true };
 }
 
